@@ -17,12 +17,13 @@ import numpy as np
 commands = []    #list of commands
 
 s = socket.socket()
-host = '192.168.10.102'  #IP Address of the Raspberry pi
+host = '192.168.29.92'  #IP Address of the Raspberry pi
+#host = '192.168.10.102'
 port = 9999            #Must be same as that in server.py
-print('hello1')
+print('If you dont see working fine as the next msg , change the host as the ip adress of pi')
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
-print('hello2')
+print('Working fine!')
 ###########################SERIAL OBJECT ##############################################
 # serialPortMac = '/dev/tty.usbmodem14101' #FOR MACBOOK
 # serialPortWin = '/dev/ttyUSB0'           #FOR WINDOWS
@@ -42,6 +43,7 @@ armActuator = 0;
 clawPitch = 0;
 clawRoll = 0;
 clawOpenClose = 0;
+temp = 0;
 
 def sendDatatoRaspi():
     global forwardBackwardSpeed, leftRightSpeed;
@@ -112,6 +114,7 @@ def stopAllMotors():
     sendDatatoRaspi();
 
 def applyBrakes():
+    print("applying brakes")
     global forwardBackwardSpeed, leftRightSpeed;
     global baseMotor, baseActuator, armActuator, clawRoll, clawPitch, clawOpenClose;
     global brakeValue;
@@ -268,25 +271,30 @@ def on_press(key):
     #data = '{0}'.format(key) This will work too than str(key)
     #print('data',data)
     #print('length of data',len(data))
-    if(format(key)=='Key.up'):
+    if format(key)=='Key.up':
         increaseForwardBackwardSpeed();
-    elif(format(key)=='Key.down'):
+    elif format(key)=='Key.down':
         decreaseForwardBackwardSpeed();
-    elif(format(key)=='Key.left'):
+    elif format(key)=='Key.left':
         decreaseleftRightSpeed();
-    elif(format(key)=='Key.right'):
+    elif format(key)=='Key.right':
         increaseleftRightSpeed();
-    elif(format(key) == 'Key.space'):
+    elif format(key) == 'Key.space':
         stopAllMotors();
+    elif len(keyData)== 4 and keyData == "u'b'":
+        print("we have b")
+        applyBrakes();
     elif(format(key) == 'Key.enter'):
         mode = mode ^ 1;             #Change Mode value
         print('MODE CHANGED - 0: Propulsion, 1: Robotic Arm')
     elif(format(key) == 'Key.shift_r'):
         moveStraight();
     else: #It is a character (length = 10) or a number (length = 3)
-        if(len(keyData) == 3): # If it is a number
-            shotenKeyData = keyData[1];
-            
+        print("in else")
+        if(len(keyData) == 4): # If it is a number
+            print(keyData)
+            shotenKeyData = keyData[2];
+            print("shoten key data",shotenKeyData)
             if(shotenKeyData == '1'):
                 deltaIncrement = 1;
             elif(shotenKeyData == '2'):

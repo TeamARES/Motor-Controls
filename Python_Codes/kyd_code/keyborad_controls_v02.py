@@ -14,7 +14,7 @@ from pynput import keyboard
 ###################### SOCKET OBJECT AND VARIABLES ###################################################
 ##################################################################################
 s = socket.socket()
-host = '192.168.43.238'  #IP Address of the Raspberry pi
+host = '192.168.29.92'  #IP Address of the Raspberry pi
 port = 9999            #Must be same as that in server.py
 print('hello1')
 #In client.py we use another way to bind host and port together by using connect function()

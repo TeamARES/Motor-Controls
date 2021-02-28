@@ -1,6 +1,5 @@
 ##### Attrey Bhatt Codes - https://github.com/attreyabhatt/Reverse-Shell ###########
 # If we are hacker then this file will go to our server that has a static ip address
-
 #importing socket so that we can connect two computer
 import socket
 #importing PySerial and time
@@ -175,4 +174,5 @@ def main():
 ########################################
 
 main()
+
 

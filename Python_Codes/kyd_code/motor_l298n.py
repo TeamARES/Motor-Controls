@@ -27,11 +27,11 @@ class motor1_L298n:
 
          IO.setwarnings(False)
          IO.setmode(IO.BCM)
-        
+        '''
          IO.setup(enablePin, IO.OUT)
          self.enablePinCtrl = IO.PWM(enablePin,100)
          self.enablePinCtrl.start(0)
-        
+       '''
          IO.setup(inputLeftPin,IO.OUT)
          IO.setup(inputRightPin, IO.OUT)
 
@@ -54,10 +54,10 @@ class motor1_L298n:
             self.backwardMotion = 0
             IO.output(self.inputLeftPin, IO.LOW)
             IO.output(self.inputRightPin, IO.LOW)
-
+        '''
         self.PWMData = abs(duticycle);
         self.enablePinCtrl.ChangeDutyCycle(self.PWMData)
-
+        '''
     def printMotor(self,motorName):
             print(motorName,self.inputLeftPin,self.inputRightPin,self.enablePin,self.PWMData,self.forwwardMotion,self.backwardMotion)
 

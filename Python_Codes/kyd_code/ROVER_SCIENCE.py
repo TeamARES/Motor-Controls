@@ -8,7 +8,7 @@ import time, threading
 import motor_ibt2
 import motor_l298n
 import os
-from time import sleep
+
 
 ###################ARDUINO SERIAL OBJECT#################################################
 #serialPortMac = '/dev/tty.usbmodem14101'
@@ -16,7 +16,6 @@ from time import sleep
 #arduinoSerial = serial.Serial(serialPortMac, 9600, timeout = 1)
 #curently fL -> 2,3
 mode = 0;
-delay = 0.03  ##30 ms delay
 motorspeed1 = 0
 motorspeed2 = 0
 forward_left_motor = motor_ibt2.motor1_ibt2(2,3)
@@ -28,21 +27,25 @@ backward_right_motor = motor_ibt2.motor1_ibt2(18,23)
 ################################
 # VARIABLES FOR ROBOTIC ARM:
 #################################
-baseMotorSpeed = 0
-baseActuator = 0;
-armActuator = 0;
-clawPitch = 0;
-clawRoll = 0;
-clawOpenClose = 0;
+m1 = 0
+m2 = 0
+m3 = 0;
+m4 = 0;
+m5 = 0;
+m6 = 0;
+m7 = 0;
+m8 = 0;
 
-Motor1_baseMotor = motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin) ## l298
-Motor2_baseActuator = motor_l298n.motor1_L298n_NOPWM(6,13);#L298n (2 pin)
-Motor3_armActuator = motor_l298n.motor1_L298n_NOPWM(19,26); #L298n (2 pin)
+Motor1= motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin) ## l298
+Motor2 = motor_l298n.motor1_L298n(6,13,1);#L298n (2 pin)
+Motor3 = motor_l298n.motor1_L298n(19,26,2); #L298n (2 pin)
 
-Motor4_clawPitch = motor_l298n.motor1_L298n(12,1,10); #L298n (2 pin) ## ibt2
+Motor4 = motor_l298n.motor1_L298n(12,16,3); #L298n (2 pin) ## ibt2
+Motor5 = motor_l298n.motor1_L298n(21,20,4);     #L298n (3 pin)
+Motor6 = motor_l298n.motor1_L298n(7,8,5);#L298n (2 pin) ## with pwm
+Motor7 = motor_l298n.motor1_L298n(27,22,9);#L298n (2 pin) ## with pwm
+Motor8 = motor_l298n.motor1_ibt2(10,19);#L298n (2 pin) ## with pwm
 
-Motor5_clawRoll = motor_l298n.motor1_L298n(21,20,16);     #L298n (3 pin)
-Motor6_clawOpenClose = motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin) ## with pwm
 #
 #########################################################
 #########################################################
@@ -60,7 +63,7 @@ def IPCheckRoutine():
         else:
             dataFromBase = "1,0,0,0,0,0,0"
             index1 = dataFromBase.index(',')
-            roboticArm(dataFromBase,index1);
+            science(dataFromBase,index1);
 
     threading.Timer(3, IPCheckRoutine).start()
 #########################################################
@@ -109,7 +112,6 @@ def bind_socket():
 ######################################################################################################################
 def socket_accept():
     #s.accept retuens : conn: object of a conversation and address is a list of IP adress and a port
-    global conn
     conn, address = s.accept()
     print("Connection has been established! |" + " IP " + address[0] + " | Port" + str(address[1]))
     read_commands(conn) #A function defined below to send command to client
@@ -144,91 +146,92 @@ def strToInt(string):
 
 def propulsion(dataFromBase, index1):
     global mode,motorspeed1, motorspeed2, forward_left_motor, forward_right_motor, backward_left_motor, backward_right_motor;
+        
     index2 = dataFromBase.index(',',index1+1)
+        
     motorspeed = dataFromBase[index1+1:index2]
     a = strToInt(motorspeed)
     motorspeed1 = a
     motorspeed2 = a
+        
     #print('motorspeed1',motorspeed1)
     motorspeed = dataFromBase[index2+1:]
+        
     print(motorspeed)
     b = strToInt(motorspeed)
+        
     motorspeed1 -= b
     motorspeed2 += b
     if (motorspeed1 > 100):
         motorspeed1 = 100
     elif (motorspeed1 < -100):
         motorspeed1 = -100
+        
     if (motorspeed2 > 100):
         motorspeed2 = 100
     elif (motorspeed2 < -100):
         motorspeed2 = -100
-
+    
     print('motorspeed1',motorspeed1)
     print('motorspeed2',motorspeed2)
-    
-    while True:
-        #move forward
-        forward_left_motor.moveMotor(motorspeed2-b)
-        backward_left_motor.moveMotor(motorspeed2-b)
-        forward_right_motor.moveMotor(motorspeed1+b)
-        forward_right_motor.moveMotor(motorspeed1+b)
-        sleep(delay)
-        ##move l-r now
-        forward_left_motor.moveMotor(motorspeed2)
-        backward_left_motor.moveMotor(motorspeed2)
-        forward_right_motor.moveMotor(motorspeed1)
-        forward_right_motor.moveMotor(motorspeed1)
-    '''    
+        
     forward_left_motor.moveMotor(motorspeed2)
-    backward_left_motor.moveMotor(motorspeed2-b)
+    backward_left_motor.moveMotor(motorspeed2)
         
     forward_right_motor.moveMotor(motorspeed1)
-    backward_right_motor.moveMotor(motorspeed1+b)
-    '''
+    backward_right_motor.moveMotor(motorspeed1)
 
 def printRoboticArmVariables():
-    print(baseMotorSpeed, baseActuator, armActuator, clawPitch, clawRoll, clawOpenClose)
+    print(m1, m2, m3, m4, m5, m6, m7, m8)
 
-def roboticArm(dataFromBase, index1):
-    global baseMotorSpeed, baseActuator, armActuator, clawRoll, clawPitch, clawOpenClose;
-    global Motor1_baseMotor, Motor2_baseActuator, Motor3_armActuator, Motor4_clawPitch, Motor5_clawRoll, Motor6_clawOpenClose;
+def science(dataFromBase, index1):
+    ## add 2 motors more
+
+    global m1, m2, m3, m4, m5, m6, m7, m8;
+    global Motor1, Motor2, Motor3, Motor4, Motor5, Motor6,Motor7,Motor8;
     
     index2 = dataFromBase.index(',',index1+1)
     StrbaseMotorSpeed = dataFromBase[index1+1:index2]
-    baseMotorSpeed = strToInt(StrbaseMotorSpeed);
-    Motor1_baseMotor.moveMotor(baseMotorSpeed);
-    Motor1_baseMotor.printMotor('Motor1_baseMotor');
-    
+    m1 = strToInt(StrbaseMotorSpeed);
+    Motor1.moveMotor(m1);
+    Motor1.printMotor('Motor1');
+
     index3 = dataFromBase.index(',',index2+1)
-    StrbaseActuator = dataFromBase[index2+1:index3]
-    baseActuator = strToInt(StrbaseActuator);
-    Motor2_baseActuator.moveMotor(baseActuator);
-    Motor2_baseActuator.printMotor('Motor2_baseActuator');
-    
+    StrbaseMotorSpeed = dataFromBase[index2+1:index3]
+    m2 = strToInt(StrbaseMotorSpeed);
+    Motor2.moveMotor(m1);
+    Motor2.printMotor('Motor2');
+
     index4 = dataFromBase.index(',',index3+1)
-    StrarmActuator = dataFromBase[index3+1:index4]
-    armActuator = strToInt(StrarmActuator);
-    Motor3_armActuator.moveMotor(armActuator);
-    Motor3_armActuator.printMotor('Motor3_armActuator');
-    
+    StrbaseMotorSpeed = dataFromBase[index3+1:index4]
+    m3 = strToInt(StrbaseMotorSpeed);
+    Motor3.moveMotor(m3);
+    Motor3.printMotor('Motor3');
+
     index5 = dataFromBase.index(',',index4+1)
-    StrclawPitch = dataFromBase[index4+1:index5]
-    clawPitch = strToInt(StrclawPitch);
-    Motor4_clawPitch.moveMotor(clawPitch);
-    Motor4_clawPitch.printMotor('Motor4_clawPitch');
-    
+    StrbaseMotorSpeed = dataFromBase[index4+1:index5]
+    m4 = strToInt(StrbaseMotorSpeed);
+    Motor4.moveMotor(m4);
+    Motor4.printMotor('Motor4');
+
     index6 = dataFromBase.index(',',index5+1)
-    StrclawRoll = dataFromBase[index5+1:index6]
-    clawRoll = strToInt(StrclawRoll);
-    Motor5_clawRoll.moveMotor(clawRoll);
-    Motor5_clawRoll.printMotor('Motor5_clawRoll');
-    
-    StrclawOpenClose = dataFromBase[index6+1:]
-    clawOpenClose = strToInt(StrclawOpenClose);
-    Motor6_clawOpenClose.moveMotor(clawOpenClose);
-    Motor6_clawOpenClose.printMotor('Motor6_clawOpenClose');
-    
+    StrbaseMotorSpeed = dataFromBase[index5+1:index6]
+    m5 = strToInt(StrbaseMotorSpeed);
+    Motor5.moveMotor(m5);
+    Motor5.printMotor('Motor5');
+
+    index7 = dataFromBase.index(',',index6+1)
+    StrbaseMotorSpeed = dataFromBase[index6+1:index7]
+    m6 = strToInt(StrbaseMotorSpeed);
+    Motor6.moveMotor(m6);
+    Motor6.printMotor('Motor6');
+
+    index8 = dataFromBase.index(',',index7+1)
+    StrbaseMotorSpeed = dataFromBase[index7+1:index8]
+    m7 = strToInt(StrbaseMotorSpeed);
+    Motor7.moveMotor(m7);
+    Motor7.printMotor('Motor7')
+
     printRoboticArmVariables();
 
 
@@ -250,7 +253,7 @@ def read_commands(conn):
             if(mode == 0):
                 propulsion(dataFromBase,index1);
             elif(mode == 1):
-                roboticArm(dataFromBase,index1);
+                science(dataFromBase,index1);
     
     
         else:

@@ -8,7 +8,7 @@ import time, threading
 import motor_ibt2
 import motor_l298n
 import os
-from time import sleep
+
 
 ###################ARDUINO SERIAL OBJECT#################################################
 #serialPortMac = '/dev/tty.usbmodem14101'
@@ -16,7 +16,6 @@ from time import sleep
 #arduinoSerial = serial.Serial(serialPortMac, 9600, timeout = 1)
 #curently fL -> 2,3
 mode = 0;
-delay = 0.03  ##30 ms delay
 motorspeed1 = 0
 motorspeed2 = 0
 forward_left_motor = motor_ibt2.motor1_ibt2(2,3)
@@ -35,14 +34,14 @@ clawPitch = 0;
 clawRoll = 0;
 clawOpenClose = 0;
 
-Motor1_baseMotor = motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin) ## l298
+Motor1_baseMotor = motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin)
 Motor2_baseActuator = motor_l298n.motor1_L298n_NOPWM(6,13);#L298n (2 pin)
 Motor3_armActuator = motor_l298n.motor1_L298n_NOPWM(19,26); #L298n (2 pin)
 
-Motor4_clawPitch = motor_l298n.motor1_L298n(12,1,10); #L298n (2 pin) ## ibt2
+Motor4_clawPitch = motor_l298n.motor1_L298n(12,1,10); #L298n (2 pin)
 
 Motor5_clawRoll = motor_l298n.motor1_L298n(21,20,16);     #L298n (3 pin)
-Motor6_clawOpenClose = motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin) ## with pwm
+Motor6_clawOpenClose = motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin)
 #
 #########################################################
 #########################################################
@@ -109,7 +108,6 @@ def bind_socket():
 ######################################################################################################################
 def socket_accept():
     #s.accept retuens : conn: object of a conversation and address is a list of IP adress and a port
-    global conn
     conn, address = s.accept()
     print("Connection has been established! |" + " IP " + address[0] + " | Port" + str(address[1]))
     read_commands(conn) #A function defined below to send command to client
@@ -144,48 +142,40 @@ def strToInt(string):
 
 def propulsion(dataFromBase, index1):
     global mode,motorspeed1, motorspeed2, forward_left_motor, forward_right_motor, backward_left_motor, backward_right_motor;
+        
     index2 = dataFromBase.index(',',index1+1)
+        
     motorspeed = dataFromBase[index1+1:index2]
     a = strToInt(motorspeed)
     motorspeed1 = a
     motorspeed2 = a
+        
     #print('motorspeed1',motorspeed1)
     motorspeed = dataFromBase[index2+1:]
+        
     print(motorspeed)
     b = strToInt(motorspeed)
+        
     motorspeed1 -= b
     motorspeed2 += b
     if (motorspeed1 > 100):
         motorspeed1 = 100
     elif (motorspeed1 < -100):
         motorspeed1 = -100
+        
     if (motorspeed2 > 100):
         motorspeed2 = 100
     elif (motorspeed2 < -100):
         motorspeed2 = -100
-
+    
     print('motorspeed1',motorspeed1)
     print('motorspeed2',motorspeed2)
-    
-    while True:
-        #move forward
-        forward_left_motor.moveMotor(motorspeed2-b)
-        backward_left_motor.moveMotor(motorspeed2-b)
-        forward_right_motor.moveMotor(motorspeed1+b)
-        forward_right_motor.moveMotor(motorspeed1+b)
-        sleep(delay)
-        ##move l-r now
-        forward_left_motor.moveMotor(motorspeed2)
-        backward_left_motor.moveMotor(motorspeed2)
-        forward_right_motor.moveMotor(motorspeed1)
-        forward_right_motor.moveMotor(motorspeed1)
-    '''    
+        
     forward_left_motor.moveMotor(motorspeed2)
-    backward_left_motor.moveMotor(motorspeed2-b)
+    backward_left_motor.moveMotor(motorspeed2)
         
     forward_right_motor.moveMotor(motorspeed1)
-    backward_right_motor.moveMotor(motorspeed1+b)
-    '''
+    backward_right_motor.moveMotor(motorspeed1)
 
 def printRoboticArmVariables():
     print(baseMotorSpeed, baseActuator, armActuator, clawPitch, clawRoll, clawOpenClose)
@@ -251,7 +241,7 @@ def read_commands(conn):
                 propulsion(dataFromBase,index1);
             elif(mode == 1):
                 roboticArm(dataFromBase,index1);
-    
+
     
         else:
             send_commands(conn,'NO')
