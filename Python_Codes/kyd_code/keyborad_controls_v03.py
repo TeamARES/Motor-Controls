@@ -17,8 +17,8 @@ import numpy as np
 commands = []    #list of commands
 
 s = socket.socket()
-host = '192.168.29.92'  #IP Address of the Raspberry pi
-#host = '192.168.10.102'
+#host = '192.168.29.92'  #IP Address of the Raspberry pi
+host = '192.168.10.102'
 port = 9999            #Must be same as that in server.py
 print('If you dont see working fine as the next msg , change the host as the ip adress of pi')
 #In client.py we use another way to bind host and port together by using connect function()

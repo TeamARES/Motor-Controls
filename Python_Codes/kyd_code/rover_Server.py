@@ -139,9 +139,9 @@ def read_commands(conn):
             index1 = dataFromBase.index(',')
             mode = dataFromBase[0:index1]
 
-            if(mode = '0'):
+            if mode == '0':
                 propulsion(dataFromBase,index1);
-            elif(mode = '1'):
+            elif mode == '1':
                 roboticArm();
     
         else:
