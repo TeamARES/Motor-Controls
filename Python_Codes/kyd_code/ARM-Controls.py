@@ -19,8 +19,8 @@ from Tkinter import *
 commands = []  # list of commands
 
 s = socket.socket()
-#host = '192.168.29.92'
-host = '192.168.10.102'  #IP Address of the Raspberry pi
+host = '192.168.29.92'
+#host = '192.168.10.102'  #IP Address of the Raspberry pi
 #host = '192.168.43.91'
 port = 9999  # Must be same as that in server.py
 print('If you dont see working fine as the next msg , change the host as the ip adress of pi')
@@ -62,15 +62,107 @@ class MyWindow:
         m6entry = Entry(win,text = "M6" ,textvariable =m6tk)
         m7entry = Entry(win,text = "M7" ,textvariable =m7tk)
         m8entry = Entry(win,text = "M8" ,textvariable=m8tk)
-        self.btn1 = Button(win, text='Send')
-        self.btn2 = Button(win, text='Stop')
-        self.btn3 = Button(win ,text='Reverse')
-        self.b1=Button(win, text='Send', command=self.send)
+        self.b1=Button(win, text='Send',command = self.send)
+        self.b1.bind('<ButtonPress-1>',send)
+        self.b1.bind('<ButtonRelease-1>',stop)
+
+        """motor forward buttons"""
+        self.mb1 = Button(win,text='M1-F')
+        self.mb1.bind('<ButtonPress-1>',m1send)
+        self.mb1.bind('<ButtonRelease-1>',stop)
+
+        self.mb2 = Button(win,text='M2-F')
+        self.mb2.bind('<ButtonPress-1>',m2send)
+        self.mb2.bind('<ButtonRelease-1>',stop)
+        
+        self.mb3 = Button(win,text='M3-F')
+        self.mb3.bind('<ButtonPress-1>',m3send)
+        self.mb3.bind('<ButtonRelease-1>',stop)
+
+        self.mb4 = Button(win,text='M4-F')
+        self.mb4.bind('<ButtonPress-1>',m4send)
+        self.mb4.bind('<ButtonRelease-1>',stop)
+
+        self.mb5 = Button(win,text='M5-F')
+        self.mb5.bind('<ButtonPress-1>',m5send)
+        self.mb5.bind('<ButtonRelease-1>',stop)
+
+        self.mb6 = Button(win,text='M6-F')
+        self.mb6.bind('<ButtonPress-1>',m6send)
+        self.mb6.bind('<ButtonRelease-1>',stop)
+
+        self.mb7 = Button(win,text='M7-F')
+        self.mb7.bind('<ButtonPress-1>',m7send)
+        self.mb7.bind('<ButtonRelease-1>',stop)
+
+        self.mb8 = Button(win,text='M8-F')
+        self.mb8.bind('<ButtonPress-1>',m8send)
+        self.mb8.bind('<ButtonRelease-1>',stop)
+
+
+        """motor reverse buttons"""
+        self.mbr1 = Button(win,text='M1-R')
+        self.mbr1.bind('<ButtonPress-1>',m1rsend)
+        self.mbr1.bind('<ButtonRelease-1>',stop)
+
+        self.mbr2 = Button(win,text='M2-R')
+        self.mbr2.bind('<ButtonPress-1>',m2rsend)
+        self.mbr2.bind('<ButtonRelease-1>',stop)
+        
+        self.mbr3 = Button(win,text='M3-R')
+        self.mbr3.bind('<ButtonPress-1>',m3rsend)
+        self.mbr3.bind('<ButtonRelease-1>',stop)
+
+        self.mbr4 = Button(win,text='M4-R')
+        self.mbr4.bind('<ButtonPress-1>',m4rsend)
+        self.mbr4.bind('<ButtonRelease-1>',stop)
+
+        self.mbr5 = Button(win,text='M5-R')
+        self.mbr5.bind('<ButtonPress-1>',m5rsend)
+        self.mbr5.bind('<ButtonRelease-1>',stop)
+
+        self.mbr6 = Button(win,text='M6-R')
+        self.mbr6.bind('<ButtonPress-1>',m6rsend)
+        self.mbr6.bind('<ButtonRelease-1>',stop)
+
+        self.mbr7 = Button(win,text='M7-R')
+        self.mbr7.bind('<ButtonPress-1>',m7rsend)
+        self.mbr7.bind('<ButtonRelease-1>',stop)
+
+        self.mbr8 = Button(win,text='M8-R')
+        self.mbr8.bind('<ButtonPress-1>',m8rsend)
+        self.mbr8.bind('<ButtonRelease-1>',stop)
+
+       
         self.b2=Button(win, text='Stop', command=self.stop)
         self.b3=Button(win, text='Reverse',command=self.reverse)
-        self.b1.place(x=200, y=200)
-        self.b2.place(x=260, y=200)
-        self.b3.place(x=260, y=150)
+
+
+        """place all forward buttons"""
+        self.mb1.place(x=300,y=10)
+        self.mb2.place(x=300,y=50)
+        self.mb3.place(x=300,y=90)
+        self.mb4.place(x=300,y=135)
+        self.mb5.place(x=300,y=175)
+        self.mb6.place(x=300,y=215)
+        self.mb7.place(x=300,y=255)
+        self.mb8.place(x=300,y=295)
+
+        """place all backward buttons"""
+
+        self.mbr1.place(x=370,y=10)
+        self.mbr2.place(x=370,y=50)
+        self.mbr3.place(x=370,y=90)
+        self.mbr4.place(x=370,y=135)
+        self.mbr5.place(x=370,y=175)
+        self.mbr6.place(x=370,y=215)
+        self.mbr7.place(x=370,y=255)
+        self.mbr8.place(x=370,y=295)
+
+        "place all common buttons"
+        self.b1.place(x=150,y=350)
+        self.b2.place(x=220, y=350)
+        self.b3.place(x=290, y=350)
 
 
     def send(self):
@@ -79,6 +171,47 @@ class MyWindow:
         stopallm()
     def reverse(self):
         reversem()
+def send(event):
+    sendDatatoRaspi()
+def stop(event):
+    stopallm()
+
+"""forward functions"""
+def m1send(event):
+    sendm1()
+def m2send(event):
+    sendm2()
+def m3send(event):
+    sendm3()
+def m4send(event):
+    sendm4()
+def m5send(event):
+    sendm5()
+def m6send(event):
+    sendm6()
+def m7send(event):
+    sendm7()
+def m8send(event):
+    sendm8()
+
+"backward functions"
+def m1rsend(event):
+    sendm1r()
+def m2rsend(event):
+    sendm2r()
+def m3rsend(event):
+    sendm3r()
+def m4rsend(event):
+    sendm4r()
+def m5rsend(event):
+    sendm5r()
+def m6rsend(event):
+    sendm6r()
+def m7rsend(event):
+    sendm7r()
+def m8rsend(event):
+    sendm8r()
+
 
 def stopallm():
     stringData = str(mode) + ',' + str(0) + ',' + str(0)+ ',' + str(
@@ -99,6 +232,161 @@ def reversem():
     print(checkDataTranfer)
 
 
+
+"""
+Forward functions:
+Only read the values for the motors whose function is called and rest are zero
+"""
+def sendm1():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(m1tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm2():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(m2tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm3():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(m3tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm4():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(m4tk.get()) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm5():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(m5tk.get()) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm6():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(m6tk.get()) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm7():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(m7tk.get()) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm8():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(m8tk.get())
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+
+
+"""
+Reverse functions:
+Only read the values for the motors whose function is called and rest are zero.
+Reverse those values and send
+"""
+def sendm1r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str("-" + m1tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm2r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str("-"+ m2tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm3r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str( "-"  + m3tk.get()) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm4r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str("-" +  m4tk.get()) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm5r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str("-"+m5tk.get()) + ',' + str(0) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm6r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str("-"+ m6tk.get()) + ','+ str(0) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm7r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str("-"+ m7tk.get()) + ',' + str(0)
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
+
+def sendm8r():
+    global m1, m2, m3, m4, m5, m6, m7 , m8
+    global mode
+    stringData = str(mode) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ',' + str(0) + ','+ str(0) + ',' + str("-"+m8tk.get())
+    s.send(str.encode(stringData))
+    # After sending we check if it was recieved or not
+    checkDataTranfer = s.recv(1024)
+    print(checkDataTranfer)
 
 def sendDatatoRaspi():
     global m1, m2, m3, m4, m5, m6, m7 , m8
@@ -122,20 +410,27 @@ m8tk = StringVar()
 
 
 mywin = MyWindow(window)
-window.title('Science Control')
-window.geometry("400x300+10+10")
-m1entry.grid(row=0,column=0)
-ac1.grid(row=0,column=1)
-ac2.grid(row=7,column=1)
-Base.grid(row=3,column=1)
-Pitch.grid(row=5,column=1)
-Load_Screw.grid(row=6,column=1)
-Roll.grid(row=4,column=1)
-m2entry.grid(row=1,column=0)
-m3entry.grid(row=2,column=0)
-m4entry.grid(row=3,column=0)
-m5entry.grid(row=4,column=0)
-m6entry.grid(row=5,column=0)
-m7entry.grid(row=6,column=0)
-m8entry.grid(row=7,column=0)
+window.title('Arm Control')
+window.geometry("500x600+10+10")
+
+
+"""place all the entry boxes in a grid"""
+m1entry.grid(row=0,column=0,pady=10)
+m2entry.grid(row=1,column=0,pady=10)
+m3entry.grid(row=2,column=0,pady=10)
+m4entry.grid(row=3,column=0,pady=10)
+m5entry.grid(row=4,column=0,pady=10)
+m6entry.grid(row=5,column=0,pady=10)
+m7entry.grid(row=6,column=0,pady=10)
+m8entry.grid(row=7,column=0,pady=10)
+
+"""place all the labels in the grid"""
+ac1.grid(row=0,column=1,pady=10)
+ac2.grid(row=2,column=1,pady=10)
+Base.grid(row=3,column=1,pady=10)
+Roll.grid(row=4,column=1,pady=10)
+Pitch.grid(row=5,column=1,pady=10)
+Load_Screw.grid(row=6,column=1,pady=10)
+
+"""main loop"""
 window.mainloop()
