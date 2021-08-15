@@ -15,22 +15,20 @@ import threading
 ###################### SOCKET OBJECT AND VARIABLES ###################################################
 ##################################################################################
 s = socket.socket()
-host = '192.168.43.75'  #IP Address of the Raspberry pi
+host = '192.168.10.102'  #IP Address of Xavier
 port = 9999            #Must be same as that in server.py
-print('hello1')
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
-print('hello2')
 ###########################SERIAL OBJECT ##############################################
 # serialPortMac = '/dev/tty.usbmodem14101' #FOR MACBOOK
 # serialPortWin = '/dev/ttyUSB0'           #FOR WINDOWS
 # serialPortUbuntu = '/dev/ttyACM0'        #FOR UBUNTU
 # ser = serial.Serial(serialPortUbuntu, 9600,timeout=0.005)
 
-def sendDatatoRaspi():
+def sendDatatoXavier():
     global forwardBackwardSpeed
     global leftRightSpeed
-    stringData = '1,' + str(forwardBackwardSpeed) + ',' + str(leftRightSpeed)
+    stringData = '0,' + str(forwardBackwardSpeed) + ',' + str(leftRightSpeed)
     # Sendng this data from socket to the raspberry pi
     s.send(str.encode(stringData))
     # After sending we check if it was recieved or not
@@ -44,22 +42,19 @@ leftRightSpeed = 0
 deaclereration_counter = time.perf_counter()
 def increaseForwardBackwardSpeed():
     global forwardBackwardSpeed
-    forwardBackwardSpeed = forwardBackwardSpeed + 1
-    if(forwardBackwardSpeed > 100):
-        forwardBackwardSpeed = 100
+    forwardBackwardSpeed = min(forwardBackwardSpeed + 1, 100)
     printSpeeds()
-    sendDatatoRaspi()
+    sendDatatoXavier()
 
 def decreaseForwardBackwardSpeed():
     global forwardBackwardSpeed
-    forwardBackwardSpeed = forwardBackwardSpeed - 1
-    if (forwardBackwardSpeed < -100):
-        forwardBackwardSpeed = -100
+    forwardBackwardSpeed = max(forwardBackwardSpeed - 1, -100)
     printSpeeds()
-    sendDatatoRaspi()
+    sendDatatoXavier()
 
 def increaseleftRightSpeed():
     global leftRightSpeed
+    '''
     if leftRightSpeed<=1 and leftRightSpeed>=0:
         leftRightSpeed = leftRightSpeed + 0.1
     elif leftRightSpeed<=10 and leftRightSpeed>=0:
@@ -68,11 +63,14 @@ def increaseleftRightSpeed():
         leftRightSpeed = leftRightSpeed + 1
     if (leftRightSpeed > 100):
         leftRightSpeed = 100
+    '''
+    leftRightSpeed = min(leftRightSpeed + 1, 100)
     printSpeeds()
-    sendDatatoRaspi()
+    sendDatatoXavier()
 
 def decreaseleftRightSpeed():
     global leftRightSpeed
+    '''
     if leftRightSpeed>=-1 and leftRightSpeed<=0:
         leftRightSpeed = leftRightSpeed - 0.1
     elif leftRightSpeed>=-10 and leftRightSpeed<=0:
@@ -81,8 +79,10 @@ def decreaseleftRightSpeed():
         leftRightSpeed = leftRightSpeed - 1
     if (leftRightSpeed < -100):
         leftRightSpeed = -100
+    '''
+    leftRightSpeed = max(leftRightSpeed - 1, -100)
     printSpeeds()
-    sendDatatoRaspi()
+    sendDatatoXavier()
 
 def stopMotor():
     global leftRightSpeed
@@ -90,14 +90,14 @@ def stopMotor():
     leftRightSpeed = 0
     forwardBackwardSpeed = 0
     printSpeeds()
-    sendDatatoRaspi()
+    sendDatatoXavier()
 ##################################################################################
 ############################### print statements ##################################
 ##################################################################################
 def printSpeeds():
     global forwardBackwardSpeed
     global leftRightSpeed
-    stringData = '1,' + str(forwardBackwardSpeed) + ',' + str(leftRightSpeed)
+    stringData = '0,' + str(forwardBackwardSpeed) + ',' + str(leftRightSpeed)
     print(" - ",stringData)
 
 ##################################################################################
@@ -115,7 +115,7 @@ def on_press(key):
         decreaseleftRightSpeed()
     elif(format(key)=='Key.right'):
         increaseleftRightSpeed()
-    elif key == keyboard.Key.esc:
+    elif(format(key) == 'Key.space'):
         print('stopingMotor')
         stopMotor()
 
@@ -133,10 +133,17 @@ def decelerate():
     global leftRightSpeed
     while True:
         stop_deaclereration_counter = time.perf_counter()
-        if stop_deaclereration_counter-deaclereration_counter>=10:
-            if forwardBackwardSpeed>=1 or forwardBackwardSpeed<=-1:
-                forwardBackwardSpeed = forwardBackwardSpeed - 0.1*forwardBackwardSpeed
+        if stop_deaclereration_counter - deaclereration_counter >= 0.1:
+            if forwardBackwardSpeed >= 1:
+                forwardBackwardSpeed -= 1
+            elif forwardBackwardSpeed <= -1:
+                forwardBackwardSpeed += 1
+            if leftRightSpeed >= 1:
+                leftRightSpeed -= 1
+            elif leftRightSpeed <= -1:
+                leftRightSpeed += 1
             deaclereration_counter = time.perf_counter()
+            sendDatatoXavier()
             printSpeeds()
         if not listener.running:
             break
