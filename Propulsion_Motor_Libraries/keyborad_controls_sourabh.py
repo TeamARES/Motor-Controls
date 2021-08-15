@@ -19,6 +19,7 @@ host = '192.168.10.102'  #IP Address of Xavier
 port = 9999            #Must be same as that in server.py
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
+stepsize = 5
 ###########################SERIAL OBJECT ##############################################
 # serialPortMac = '/dev/tty.usbmodem14101' #FOR MACBOOK
 # serialPortWin = '/dev/ttyUSB0'           #FOR WINDOWS
@@ -42,18 +43,21 @@ leftRightSpeed = 0
 deaclereration_counter = time.perf_counter()
 def increaseForwardBackwardSpeed():
     global forwardBackwardSpeed
-    forwardBackwardSpeed = min(forwardBackwardSpeed + 1, 100)
+    global stepsize
+    forwardBackwardSpeed = min(forwardBackwardSpeed + stepsize, 100)
     printSpeeds()
     sendDatatoXavier()
 
 def decreaseForwardBackwardSpeed():
     global forwardBackwardSpeed
-    forwardBackwardSpeed = max(forwardBackwardSpeed - 1, -100)
+    global stepsize
+    forwardBackwardSpeed = max(forwardBackwardSpeed - stepsize, -100)
     printSpeeds()
     sendDatatoXavier()
 
 def increaseleftRightSpeed():
     global leftRightSpeed
+    global stepsize
     '''
     if leftRightSpeed<=1 and leftRightSpeed>=0:
         leftRightSpeed = leftRightSpeed + 0.1
@@ -64,12 +68,13 @@ def increaseleftRightSpeed():
     if (leftRightSpeed > 100):
         leftRightSpeed = 100
     '''
-    leftRightSpeed = min(leftRightSpeed + 1, 100)
+    leftRightSpeed = min(leftRightSpeed + stepsize, 100)
     printSpeeds()
     sendDatatoXavier()
 
 def decreaseleftRightSpeed():
     global leftRightSpeed
+    global stepsize
     '''
     if leftRightSpeed>=-1 and leftRightSpeed<=0:
         leftRightSpeed = leftRightSpeed - 0.1
@@ -80,7 +85,7 @@ def decreaseleftRightSpeed():
     if (leftRightSpeed < -100):
         leftRightSpeed = -100
     '''
-    leftRightSpeed = max(leftRightSpeed - 1, -100)
+    leftRightSpeed = max(leftRightSpeed - stepsize, -100)
     printSpeeds()
     sendDatatoXavier()
 
