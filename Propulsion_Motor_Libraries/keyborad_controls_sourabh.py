@@ -19,7 +19,7 @@ host = '192.168.10.102'  #IP Address of Xavier
 port = 9999            #Must be same as that in server.py
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
-stepsize = 5
+stepsize = 1
 ###########################SERIAL OBJECT ##############################################
 # serialPortMac = '/dev/tty.usbmodem14101' #FOR MACBOOK
 # serialPortWin = '/dev/ttyUSB0'           #FOR WINDOWS
