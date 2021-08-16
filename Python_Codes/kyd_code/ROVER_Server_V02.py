@@ -5,9 +5,11 @@
 import socket
 #importing PySerial and time
 import serial
+
+import json
 import time
-import motor_ibt2
-import motor_l298n
+##import motor_ibt2
+##import motor_l298n
 ###################ARDUINO SERIAL OBJECT#################################################
 #serialPortMac = '/dev/tty.usbmodem14101'
 #serialPortPi = '/dev/ttyACM0'
@@ -16,10 +18,10 @@ import motor_l298n
 mode = 0;
 motorspeed1 = 0
 motorspeed2 = 0
-forward_left_motor = motor_ibt2.motor1_ibt2(2,3)
-forward_right_motor = motor_ibt2.motor1_ibt2(4,17)
-backward_left_motor = motor_ibt2.motor1_ibt2(15,14)
-backward_right_motor = motor_ibt2.motor1_ibt2(23,18)
+forward_left_motor = ""##motor_ibt2.motor1_ibt2(2,3)
+forward_right_motor = "" ##motor_ibt2.motor1_ibt2(4,17)
+backward_left_motor = ""  ##motor_ibt2.motor1_ibt2(15,14)
+backward_right_motor = ""   ##motor_ibt2.motor1_ibt2(23,18)
 
 ################################
 # VARIABLES FOR ROBOTIC ARM:
@@ -114,6 +116,27 @@ def strToInt(string):
     else:
         return x
 
+def sendtoard(data):
+    ser  = serial.Serial("COM3", baudrate= 9600, 
+           timeout=2.5, 
+           parity=serial.PARITY_NONE, 
+           bytesize=serial.EIGHTBITS, 
+           stopbits=serial.STOPBITS_ONE
+        )
+    print (data)
+    if ser.isOpen():
+        ser.write(data.encode('ascii'))
+        ser.flush()
+        try:
+            incoming = ser.readline().decode("utf-8")
+            print (incoming)
+        except Exception as e:
+            print (e)
+            pass
+        ser.close()
+    else:
+        print ("opening error")
+
 def propulsion(dataFromBase, index1):
     global mode,motorspeed1, motorspeed2, forward_left_motor, forward_right_motor, backward_left_motor, backward_right_motor;
         
@@ -145,11 +168,28 @@ def propulsion(dataFromBase, index1):
     print('motorspeed1',motorspeed1)
     print('motorspeed2',motorspeed2)
         
+    fl = motorspeed2
+    bl = motorspeed2
+    fr = motorspeed1
+    br = motorspeed1
+
+    dic = dict()
+    dic.update({"fl":fl})
+    dic.update({"bl":bl})
+    dic.update({"fr":fr})
+    dic.update({"br":br})
+    dic.update({"kill":0})
+    dic.update({"req":1})
+
+    data = json.dumps(dic)
+    sendtoard(data)
+    '''
     forward_left_motor.moveMotor(motorspeed2)
     backward_left_motor.moveMotor(motorspeed2)
         
     forward_right_motor.moveMotor(motorspeed1)
     backward_right_motor.moveMotor(motorspeed1)
+    '''
 
 def printRoboticArmVariables():
     print(baseMotorSpeed, baseActuator, armActuator, clawPitch, clawRoll, clawOpenClose)
