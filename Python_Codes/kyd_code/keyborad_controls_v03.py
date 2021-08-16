@@ -6,7 +6,11 @@ import socket
 #importing time
 import time
 #importing Serial to take data from serial port
+<<<<<<< HEAD
 #import serial
+=======
+##import serial
+>>>>>>> 6597cce66b90f90dab8c46ae27add77324e886a7
 #importing the ke yboard listener from pynput
 from pynput import keyboard
 import numpy as np
