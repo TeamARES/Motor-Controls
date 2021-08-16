@@ -20,7 +20,8 @@ port = 9999            #Must be same as that in server.py
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
 stepsize = 1
-###########################SERIAL OBJECT ##############################################
+dec_stepsize = 1
+#SERIAL OBJECT ##############################################
 # serialPortMac = '/dev/tty.usbmodem14101' #FOR MACBOOK
 # serialPortWin = '/dev/ttyUSB0'           #FOR WINDOWS
 # serialPortUbuntu = '/dev/ttyACM0'        #FOR UBUNTU
@@ -139,14 +140,14 @@ def decelerate():
     while True:
         stop_deaclereration_counter = time.perf_counter()
         if stop_deaclereration_counter - deaclereration_counter >= 0.1:
-            if forwardBackwardSpeed >= 1:
-                forwardBackwardSpeed -= 1
-            elif forwardBackwardSpeed <= -1:
-                forwardBackwardSpeed += 1
-            if leftRightSpeed >= 1:
-                leftRightSpeed -= 1
-            elif leftRightSpeed <= -1:
-                leftRightSpeed += 1
+            if forwardBackwardSpeed >= dec_stepsize:
+                forwardBackwardSpeed -=  dec_stepsize
+            elif forwardBackwardSpeed <= -dec_stepsize:
+                forwardBackwardSpeed += dec_stepsize
+            if leftRightSpeed >= dec_stepsize:
+                leftRightSpeed -= dec_stepsize
+            elif leftRightSpeed <= -dec_stepsize:
+                leftRightSpeed += dec_stepsize
             deaclereration_counter = time.perf_counter()
             sendDatatoXavier()
             printSpeeds()
