@@ -27,25 +27,21 @@ backward_right_motor = motor_ibt2.motor1_ibt2(18,23)
 ################################
 # VARIABLES FOR ROBOTIC ARM:
 #################################
-m1 = 0
-m2 = 0
-m3 = 0;
-m4 = 0;
-m5 = 0;
-m6 = 0;
-m7 = 0;
-m8 = 0;
+baseMotorSpeed = 0
+baseActuator = 0;
+armActuator = 0;
+clawPitch = 0;
+clawRoll = 0;
+clawOpenClose = 0;
 
-Motor1= motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin) ## l298
-Motor2 = motor_l298n.motor1_L298n(6,13,1);#L298n (2 pin)
-Motor3 = motor_l298n.motor1_L298n(19,26,2); #L298n (2 pin)
+Motor1_baseMotor = motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin) ## l298
+Motor2_baseActuator = motor_l298n.motor1_L298n_NOPWM(6,13);#L298n (2 pin)
+Motor3_armActuator = motor_l298n.motor1_L298n_NOPWM(19,26); #L298n (2 pin)
 
-Motor4 = motor_l298n.motor1_L298n(12,16,3); #L298n (2 pin) ## ibt2
-Motor5 = motor_l298n.motor1_L298n(21,20,4);     #L298n (3 pin)
-Motor6 = motor_l298n.motor1_L298n(7,8,5);#L298n (2 pin) ## with pwm
-Motor7 = motor_l298n.motor1_L298n(27,22,9);#L298n (2 pin) ## with pwm
-Motor8 = motor_l298n.motor1_ibt2(10,19);#L298n (2 pin) ## with pwm
+Motor4_clawPitch = motor_l298n.motor1_L298n(12,1,10); #L298n (2 pin) ## ibt2
 
+Motor5_clawRoll = motor_l298n.motor1_L298n(21,20,16);     #L298n (3 pin)
+Motor6_clawOpenClose = motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin) ## with pwm
 #
 #########################################################
 #########################################################
@@ -63,7 +59,7 @@ def IPCheckRoutine():
         else:
             dataFromBase = "1,0,0,0,0,0,0"
             index1 = dataFromBase.index(',')
-            science(dataFromBase,index1);
+            roboticArm(dataFromBase,index1);
 
     threading.Timer(3, IPCheckRoutine).start()
 #########################################################
@@ -182,56 +178,47 @@ def propulsion(dataFromBase, index1):
     backward_right_motor.moveMotor(motorspeed1)
 
 def printRoboticArmVariables():
-    print(m1, m2, m3, m4, m5, m6, m7, m8)
+    print(baseMotorSpeed, baseActuator, armActuator, clawPitch, clawRoll, clawOpenClose)
 
-def science(dataFromBase, index1):
-    ## add 2 motors more
-
-    global m1, m2, m3, m4, m5, m6, m7, m8;
-    global Motor1, Motor2, Motor3, Motor4, Motor5, Motor6,Motor7,Motor8;
+def roboticArm(dataFromBase, index1):
+    global baseMotorSpeed, baseActuator, armActuator, clawRoll, clawPitch, clawOpenClose;
+    global Motor1_baseMotor, Motor2_baseActuator, Motor3_armActuator, Motor4_clawPitch, Motor5_clawRoll, Motor6_clawOpenClose;
     
     index2 = dataFromBase.index(',',index1+1)
     StrbaseMotorSpeed = dataFromBase[index1+1:index2]
-    m1 = strToInt(StrbaseMotorSpeed);
-    Motor1.moveMotor(m1);
-    Motor1.printMotor('Motor1');
-
+    baseMotorSpeed = strToInt(StrbaseMotorSpeed);
+    Motor1_baseMotor.moveMotor(baseMotorSpeed);
+    Motor1_baseMotor.printMotor('Motor1_baseMotor');
+    
     index3 = dataFromBase.index(',',index2+1)
-    StrbaseMotorSpeed = dataFromBase[index2+1:index3]
-    m2 = strToInt(StrbaseMotorSpeed);
-    Motor2.moveMotor(m1);
-    Motor2.printMotor('Motor2');
-
+    StrbaseActuator = dataFromBase[index2+1:index3]
+    baseActuator = strToInt(StrbaseActuator);
+    Motor2_baseActuator.moveMotor(baseActuator);
+    Motor2_baseActuator.printMotor('Motor2_baseActuator');
+    
     index4 = dataFromBase.index(',',index3+1)
-    StrbaseMotorSpeed = dataFromBase[index3+1:index4]
-    m3 = strToInt(StrbaseMotorSpeed);
-    Motor3.moveMotor(m3);
-    Motor3.printMotor('Motor3');
-
+    StrarmActuator = dataFromBase[index3+1:index4]
+    armActuator = strToInt(StrarmActuator);
+    Motor3_armActuator.moveMotor(armActuator);
+    Motor3_armActuator.printMotor('Motor3_armActuator');
+    
     index5 = dataFromBase.index(',',index4+1)
-    StrbaseMotorSpeed = dataFromBase[index4+1:index5]
-    m4 = strToInt(StrbaseMotorSpeed);
-    Motor4.moveMotor(m4);
-    Motor4.printMotor('Motor4');
-
+    StrclawPitch = dataFromBase[index4+1:index5]
+    clawPitch = strToInt(StrclawPitch);
+    Motor4_clawPitch.moveMotor(clawPitch);
+    Motor4_clawPitch.printMotor('Motor4_clawPitch');
+    
     index6 = dataFromBase.index(',',index5+1)
-    StrbaseMotorSpeed = dataFromBase[index5+1:index6]
-    m5 = strToInt(StrbaseMotorSpeed);
-    Motor5.moveMotor(m5);
-    Motor5.printMotor('Motor5');
-
-    index7 = dataFromBase.index(',',index6+1)
-    StrbaseMotorSpeed = dataFromBase[index6+1:index7]
-    m6 = strToInt(StrbaseMotorSpeed);
-    Motor6.moveMotor(m6);
-    Motor6.printMotor('Motor6');
-
-    index8 = dataFromBase.index(',',index7+1)
-    StrbaseMotorSpeed = dataFromBase[index7+1:index8]
-    m7 = strToInt(StrbaseMotorSpeed);
-    Motor7.moveMotor(m7);
-    Motor7.printMotor('Motor7')
-
+    StrclawRoll = dataFromBase[index5+1:index6]
+    clawRoll = strToInt(StrclawRoll);
+    Motor5_clawRoll.moveMotor(clawRoll);
+    Motor5_clawRoll.printMotor('Motor5_clawRoll');
+    
+    StrclawOpenClose = dataFromBase[index6+1:]
+    clawOpenClose = strToInt(StrclawOpenClose);
+    Motor6_clawOpenClose.moveMotor(clawOpenClose);
+    Motor6_clawOpenClose.printMotor('Motor6_clawOpenClose');
+    
     printRoboticArmVariables();
 
 
@@ -253,7 +240,7 @@ def read_commands(conn):
             if(mode == 0):
                 propulsion(dataFromBase,index1);
             elif(mode == 1):
-                science(dataFromBase,index1);
+                roboticArm(dataFromBase,index1);
     
     
         else:
