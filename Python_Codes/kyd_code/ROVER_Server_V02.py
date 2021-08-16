@@ -33,12 +33,12 @@ clawPitch = 0;
 clawRoll = 0;
 clawOpenClose = 0;
 
-Motor1_baseMotor = motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin)
-Motor2_baseActuator = motor_l298n.motor1_L298n_NOPWM(6,13);#L298n (2 pin)
-Motor3_armActuator = motor_l298n.motor1_L298n_NOPWM(19,26); #L298n (2 pin)
-Motor4_clawPitch = motor_l298n.motor1_L298n_NOPWM(12,1); #L298n (2 pin)
-Motor5_clawRoll = motor_l298n.motor1_L298n(21,20,16);     #L298n (3 pin)
-Motor6_clawOpenClose = motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin)b
+Motor1_baseMotor = "" ##motor_ibt2.motor1_ibt2(25,24);             #IBT2 (2 pin)
+Motor2_baseActuator = "" ##mmotor_l298n.motor1_L298n_NOPWM(6,13);#L298n (2 pin)
+Motor3_armActuator = "" ##motor_l298n.motor1_L298n_NOPWM(19,26); #L298n (2 pin)
+Motor4_clawPitch = "" ##motor_l298n.motor1_L298n_NOPWM(12,1); #L298n (2 pin)
+Motor5_clawRoll = "" ##motor_l298n.motor1_L298n(21,20,16);     #L298n (3 pin)
+Motor6_clawOpenClose = "" ##motor_l298n.motor1_L298n_NOPWM(7,8);#L298n (2 pin)b
 #
 
 ######################################################################################################################
@@ -195,6 +195,9 @@ def printRoboticArmVariables():
     print(baseMotorSpeed, baseActuator, armActuator, clawPitch, clawRoll, clawOpenClose)
 
 def roboticArm(dataFromBase, index1):
+    print("arm called")
+    return 0
+    '''
     global baseMotorSpeed, baseActuator, armActuator, clawRoll, clawPitch, clawOpenClose;
     global Motor1_baseMotor, Motor2_baseActuator, Motor3_armActuator, Motor4_clawPitch, Motor5_clawRoll, Motor6_clawOpenClose;
     
@@ -234,6 +237,7 @@ def roboticArm(dataFromBase, index1):
     Motor6_clawOpenClose.printMotor('Motor6_clawOpenClose');
     
     printRoboticArmVariables();
+    '''
 
 
 def read_commands(conn):
