@@ -12,10 +12,10 @@ from pynput import keyboard
 import threading
 
 ##################################################################################
-###################### SOCKET OBJECT AND VARIABLES ###################################################
+###################### SOCKET OBJECT AND VARABLES ###################################################
 ##################################################################################
 s = socket.socket()
-host = '192.168.10.102'  #IP Address of Xavier
+host = '192.168.29.139'  #IP Address of Xavier
 port = 9999            #Must be same as that in server.py
 #In client.py we use another way to bind host and port together by using connect function()
 s.connect((host, port))
@@ -30,12 +30,15 @@ dec_stepsize = 1
 def sendDatatoXavier():
     global forwardBackwardSpeed
     global leftRightSpeed
+    start = time.time()
     stringData = '0,' + str(forwardBackwardSpeed) + ',' + str(leftRightSpeed)
     # Sendng this data from socket to the raspberry pi
     s.send(str.encode(stringData))
     # After sending we check if it was recieved or not
     checkDataTranfer = s.recv(1024)
-    print(checkDataTranfer)
+    end = time.time()
+    print("Check:",checkDataTranfer)
+    print("Time taken",end-start)
 ##################################################################################
 ############################### Variables amd functions for speed ################
 ##################################################################################
