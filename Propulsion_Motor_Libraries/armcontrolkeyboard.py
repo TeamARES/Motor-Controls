@@ -30,7 +30,7 @@ def stopall():
 def on_press(key):
     global numkey
     print("finding",format(key))
-    if(format(key) in ["'1'","'2'","'3'","'4'","'5'"]):
+    if(format(key) in ["'1'","'2'","'3'","'4'","'5'","'6"]):
         numkey = key  
     elif(format(key) == 'Key.up'):
         forward(numkey)
